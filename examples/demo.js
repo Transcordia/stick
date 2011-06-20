@@ -1,5 +1,5 @@
-// Stick demo app. Run with `ringo demo.js`, or see below for running with
-// various environments
+// Stick demo app. Run with `ringo -m .. examples/demo.js` with the -m option
+// pointing to the Stick parent directory.
 
 var {Application} = require("stick"),
     {Server} = require("ringo/httpserver"),
@@ -30,12 +30,11 @@ app.mount("/hello", dummyPage("hello world!"));
 app.mount("/error", function(req) {
     throw new Error("Something went wrong");
 });
-app.static(module.resolve("docs"), "index.html"); // serve files in docs as static resources
+app.static(module.resolve("../docs"), "index.html"); // serve files in docs as static resources
 
 // mount example apps
-app.mount("/wiki", module.resolve("examples/ringowiki/config"));
-app.mount("/mount", module.resolve("examples/mount-route/app"));
-app.mount("/demo", module.resolve("examples/demo/config"));
+app.mount("/mount", module.resolve("mount-route/app"));
+app.mount("/continuation", module.resolve("continuation/app"));
 
 // production environment, run with RINGO_ENV=production ringo demo.js
 var prod = app.env("production");
@@ -43,16 +42,18 @@ prod.configure("gzip", "etag", "error");
 prod.error.location = false; // disable error location and stack traces
 
 // development environment, run with RINGO_ENV=development ringo demo.js
-app.env("development").configure("responselog", "error");
+var dev = app.env("development").configure("requestlog", "error");
+dev.requestlog.append = true;
 
 // profiler environment, run with RINGO_ENV=profiler ringo -o-1 demo.js
-app.env("profiler").configure("responselog", "profiler", "error");
+var prof = app.env("profiler").configure("requestlog", "profiler", "error");
+prof.requestlog.append = true;
 
 // create a password protected admin application
 var admin = new Application(dummyPage("admin zone"));
 admin.configure("basicauth");
 // add basic authentication, password is "secret"
-admin.basicauth("/", "admin", "e5e9fa1ba31ecd1ae84f75caaa474f3a663f05f4");
+admin.basicauth("/", "admin", "E5E9FA1BA31ECD1AE84F75CAAA474F3A663F05F4");
 app.mount("/admin", admin);
 
 // helper for creating simple dummy pages
@@ -67,6 +68,6 @@ function dummyPage(text) {
 
 // start server if run as main script
 if (require.main === module) {
-    require("stick/server").main(module.id);
+    require("ringo/httpserver").main(module.id);
 }
 
