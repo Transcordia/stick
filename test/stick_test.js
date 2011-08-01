@@ -97,18 +97,18 @@ exports.testRouteResolution = function() {
     var app = new Application();
     app.configure(route);
 
-    app.get("/:param", function(req, p) { return p });
+    app.get("/:param", function(req, p) { return '[' + p + ']' });
     app.get("/foo", function() { return "foo" });
-    app.get("/bar/:param", function(req, p) { return 'bar/' + p });
+    app.get("/bar/:param", function(req, p) { return 'bar/[' + p + ']'});
     app.get("/bar/foo", function() { return "bar/foo" });
-    app.get("/baz/:param/qux", function(req, p) { return 'baz/' + p + '/qux'});
+    app.get("/baz/:param/qux", function(req, p) { return 'baz/[' + p + ']/qux'});
     app.get("/baz/123/qux", function() { return "baz/123/qux" });
 
     testPath("/foo", "foo");
-    testPath("/abc", "abc");
+    testPath("/abc", "[abc]");
     testPath("/bar/foo", "bar/foo");
-    testPath("/bar/abc", "bar/abc");
-    testPath("/baz/abc/qux", "baz/abc/qux");
+    testPath("/bar/abc", "bar/[abc]");
+    testPath("/baz/abc/qux", "baz/[abc]/qux");
     testPath("/baz/123/qux", "baz/123/qux");
 };
 
