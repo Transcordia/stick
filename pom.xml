@@ -14,6 +14,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <scm>
+        <url>http://github.com/oravecz/stick</url>
+        <connection>scm:git:git://github.com/oravecz/stick.git</connection>
+        <developerConnection>scm:git:git@github.com:oravecz/stick.git</developerConnection>
+    </scm>
+    
     <distributionManagement>
         <snapshotRepository>
             <id>tracer_repo</id>
@@ -31,7 +37,7 @@
         <dependency>
             <groupId>org.ringojs</groupId>
             <artifactId>ringojs</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.8.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
