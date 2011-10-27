@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.ringojs</groupId>
     <artifactId>stick</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.2.1</version>
 
     <packaging>jar</packaging>
 
@@ -97,14 +95,13 @@
                         <phase>test</phase>
                         <configuration>
                             <target unless="maven.test.skip">
-                                <java classname="org.ringojs.tools.launcher.Main" fork="true"
-                                      failonerror="yes">
+                                <java classname="org.ringojs.tools.launcher.Main" fork="true" failonerror="yes">
                                     <jvmarg value="-Dringo.home=src/main/webapp/WEB-INF" />
                                     <jvmarg value="-Dringo.module-path=app" />
                                     <jvmarg value="-Dringo.classpath=" />
                                     <jvmarg value="-Dringo.verbose=true" />
-                                    <arg value="test/stick_test.js"/>
-                                    <classpath refid="maven.test.classpath"/>
+                                    <arg value="test/stick_test.js" />
+                                    <classpath refid="maven.test.classpath" />
                                 </java>
                             </target>
                         </configuration>
