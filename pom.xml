@@ -39,6 +39,12 @@
         </repository>
     </repositories>
 
+    <scm>
+        <url>http://github.com/oravecz/stick</url>
+        <connection>scm:git:git://github.com/oravecz/stick.git</connection>
+        <developerConnection>scm:git:git@github.com:oravecz/stick.git</developerConnection>
+    </scm>
+
     <distributionManagement>
         <snapshotRepository>
             <id>td-repo</id>
