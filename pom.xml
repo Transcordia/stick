@@ -14,29 +14,62 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>td-releases</id>
+            <name>tracerdigital Maven Release Repository</name>
+            <url>http://maven.tracerdigital.com/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>td-snapshots</id>
+            <name>tracerdigital Maven Snapshot Repository</name>
+            <url>http://maven.tracerdigital.com/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <snapshotRepository>
-            <id>tracer_repo</id>
-            <name>tracer_repo-snapshots</name>
-            <url>https://repo.tracermedia.com/artifactory/ext-snapshots-local</url>
+            <id>td-repo</id>
+            <name>td-repo-snapshots</name>
+            <url>s3://maven.tracerdigital.com/snapshots</url>
         </snapshotRepository>
         <repository>
-               <id>tracer_repo</id>
-               <name>tracer_repo-releases</name>
-               <url>https://repo.tracermedia.com/artifactory/ext-releases-local</url>
-           </repository>
-    </distributionManagement>    
+            <id>td-repo</id>
+            <name>td-repo-releases</name>
+            <url>s3://maven.tracerdigital.com/releases</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.ringojs</groupId>
             <artifactId>ringojs</artifactId>
-            <version>0.8.0-SNAPSHOT</version>
+            <version>0.9.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
+        <extensions>
+           <extension>
+               <groupId>org.springframework.build.aws</groupId>
+               <artifactId>org.springframework.build.aws.maven</artifactId>
+               <version>3.0.0.RELEASE</version>
+           </extension>
+       </extensions>
+
         <resources>
             <resource>
                 <targetPath>${project.build.outputDirectory}/stick</targetPath>
