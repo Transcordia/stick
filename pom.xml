@@ -13,9 +13,9 @@
     </properties>
 
     <scm>
-        <url>http://github.com/oravecz/stick</url>
-        <connection>scm:git:git://github.com/oravecz/stick.git</connection>
-        <developerConnection>scm:git:git@github.com:oravecz/stick.git</developerConnection>
+        <url>http://github.com/pykl/stick</url>
+        <connection>scm:git:git://github.com/pykl/stick.git</connection>
+        <developerConnection>scm:git:git@github.com:pykl/stick.git</developerConnection>
     </scm>
 
     <distributionManagement>
