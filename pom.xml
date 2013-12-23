@@ -13,22 +13,22 @@
     </properties>
 
     <scm>
-        <url>http://github.com/pykl/stick</url>
-        <connection>scm:git:git://github.com/pykl/stick.git</connection>
-        <developerConnection>scm:git:git@github.com:pykl/stick.git</developerConnection>
+        <url>http://github.com/oravecz/stick</url>
+        <connection>scm:git:git://github.com/oravecz/stick.git</connection>
+        <developerConnection>scm:git:git@github.com:oravecz/stick.git</developerConnection>
     </scm>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>pykl-repo</id>
-            <name>pykl-repo-snapshots</name>
-            <url>s3://repo.pykl.org/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>pykl-repo</id>
-            <name>pykl-repo-releases</name>
-            <url>s3://repo.pykl.org/releases</url>
+            <id>vxs-release</id>
+            <name>VisualXS Releases</name>
+            <url>s3://repo.visualxs.com/releases</url>
         </repository>
+        <snapshotRepository>
+            <id>vxs-snapshot</id>
+            <name>VisualXS Snapshots</name>
+            <url>s3://repo.visualxs.com/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <dependencies>
