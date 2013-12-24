@@ -4,7 +4,7 @@
 
     <groupId>org.ringojs</groupId>
     <artifactId>stick</artifactId>
-    <version>0.1.0-alpha-8-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.ringojs</groupId>
             <artifactId>ringojs</artifactId>
-            <version>0.9.0-alpha-6</version>
+            <version>0.10.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -78,11 +78,11 @@
 
     <build>
         <extensions>
-           <extension>
-               <groupId>org.springframework.build.aws</groupId>
-               <artifactId>org.springframework.build.aws.maven</artifactId>
-               <version>3.0.0.RELEASE</version>
-           </extension>
+            <extension>
+                <groupId>org.kuali.maven.wagons</groupId>
+                <artifactId>maven-s3-wagon</artifactId>
+                <version>1.2.1</version>
+            </extension>
        </extensions>
 
         <resources>
