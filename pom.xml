@@ -5,26 +5,20 @@
     <parent>
         <groupId>com.transcordia</groupId>
         <artifactId>transcordia-parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.2</version>
     </parent>
 
     <groupId>org.ringojs</groupId>
     <artifactId>stick</artifactId>
-    <version>0.3.0.1</version>
+    <version>0.3.0.2</version>
 
     <packaging>jar</packaging>
-
-    <scm>
-        <url>http://github.com/Transcordia/stick</url>
-        <connection>scm:git:git://github.com/Transcordia/stick.git</connection>
-        <developerConnection>scm:git:git@github.com:Transcordia/stick.git</developerConnection>
-    </scm>
 
     <dependencies>
         <dependency>
             <groupId>org.ringojs</groupId>
             <artifactId>ringojs</artifactId>
-            <version>0.10.1.1</version>
+            <version>0.10.1.5</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -64,6 +58,13 @@
         <system>github</system>
         <url>https://github.com/ringo/stick/issues</url>
     </issueManagement>
+
+    <repositories>
+        <repository>
+            <id>repo.transcordia.com</id>
+            <url>http://repo.transcordia.com/releases/</url>
+        </repository>
+    </repositories>
 
     <build>
         <resources>
