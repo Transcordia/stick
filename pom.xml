@@ -4,38 +4,21 @@
 
     <groupId>org.ringojs</groupId>
     <artifactId>stick</artifactId>
-    <version>0.1.0-alpha-7-SNAPSHOT</version>
+    <version>0.3.0.1-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <scm>
-        <url>http://github.com/pykl/stick</url>
-        <connection>scm:git:git://github.com/pykl/stick.git</connection>
-        <developerConnection>scm:git:git@github.com:pykl/stick.git</developerConnection>
+        <url>http://github.com/Transcordia/stick</url>
+        <connection>scm:git:git://github.com/Transcordia/stick.git</connection>
+        <developerConnection>scm:git:git@github.com:Transcordia/stick.git</developerConnection>
     </scm>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>pykl-repo</id>
-            <name>pykl-repo-snapshots</name>
-            <url>s3://repo.pykl.org/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>pykl-repo</id>
-            <name>pykl-repo-releases</name>
-            <url>s3://repo.pykl.org/releases</url>
-        </repository>
-    </distributionManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.ringojs</groupId>
             <artifactId>ringojs</artifactId>
-            <version>0.9.0-alpha-5</version>
+            <version>0.10.1.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -73,18 +56,10 @@
 
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/hns/stick/issues</url>
+        <url>https://github.com/ringo/stick/issues</url>
     </issueManagement>
 
     <build>
-        <extensions>
-           <extension>
-               <groupId>org.springframework.build.aws</groupId>
-               <artifactId>org.springframework.build.aws.maven</artifactId>
-               <version>3.0.0.RELEASE</version>
-           </extension>
-       </extensions>
-
         <resources>
             <resource>
                 <targetPath>${project.build.outputDirectory}/stick</targetPath>
