@@ -67,6 +67,54 @@ exports.testMount = function() {
     testMount(app);
 };
 
+/**
+* The default behavior of mount.js middleware will issue a 303 redirect if the
+* user enters a mount path which does not end with a slash on a GET request.
+* The redirect returns the browser to the same path, but with a trailing slash.
+* Not very nice for performance or style when using REST urls.
+*/
+exports.testMountRedirect = function() {
+    var response;
+
+    var app = new Application();
+    app.configure(mount);
+
+    app.mount("/", function() { return "root" });
+    app.mount("/foo", function() { return "foo" });
+    app.mount("/foo/bar", function() { return "foo/bar" });
+
+    // These URLs should return a 303 response using the default URL treatment
+    response = app({headers: {}, method: "GET", env: {}, scriptName: "", pathInfo: ""});
+    assert.strictEqual(response.status, 303);
+    assert.strictEqual(response.headers.Location, "/");
+    response = app({headers: {}, method: "GET", env: {}, scriptName: "", pathInfo: "/foo"});
+    assert.strictEqual(response.status, 303);
+    assert.strictEqual(response.headers.Location, "/foo/");
+    response = app({headers: {}, method: "GET", env: {}, scriptName: "", pathInfo: "/foo/bar"});
+    assert.strictEqual(response.status, 303);
+    assert.strictEqual(response.headers.Location, "/foo/bar/");
+};
+
+/**
+* When using the mount command, the developer can choose to use REST-style URLs
+* without a redirect and without a trailing slash on the end of the URL.
+*/
+exports.testMountNoRedirect = function() {
+    var response;
+
+    var app = new Application();
+    app.configure(mount);
+
+    app.mount("/", function() { return "root" }, true);
+    app.mount("/foo", function() { return "foo" }, true);
+    app.mount("/foo/bar", function() { return "foo/bar" }, true);
+
+    // Using REST urls, these requests should return the expected content
+    assert.equal(app({headers: {}, env: {}, method: "GET", pathInfo: ""}), "root");
+    assert.equal(app({headers: {}, env: {}, method: "GET", pathInfo: "/foo"}), "foo");
+    assert.equal(app({headers: {}, env: {}, method: "GET", pathInfo: "/foo/bar"}), "foo/bar");
+};
+
 exports.testMountSort = function() {
     var app = new Application();
     app.configure(mount);
@@ -124,11 +172,11 @@ exports.testMountAndRouteResolution = function() {
     var app = new Application();
     app.configure(route);
 
-    app.get("/:param", function(req, p) { return p });
+    app.get("/:param", function(req, p) { return '[' + p + ']'});
     app.get("/foo", function() { return "foo" });
     app.get("/bar/foo", function() { return "bar/foo" });
-    app.get("/bar/:param", function(req, p) { return 'bar/' + p });
-    app.get("/baz/:param/qux", function(req, p) { return 'baz/' + p + '/qux'});
+    app.get("/bar/:param", function(req, p) { return 'bar/[' + p + ']'});
+    app.get("/baz/:param/qux", function(req, p) { return 'baz/[' + p + ']/qux'});
     app.get("/baz/123/qux", function() { return "baz/123/qux" });
 
     var mountApp = new Application();
@@ -136,12 +184,181 @@ exports.testMountAndRouteResolution = function() {
     mountApp.mount("/test", app);
 
     testPath("/test/foo", "foo");
-    testPath("/test/abc", "abc");
+    testPath("/test/abc", "[abc]");
     testPath("/test/bar/foo", "bar/foo");
-    testPath("/test/bar/abc", "bar/abc");
-    testPath("/test/baz/abc/qux", "baz/abc/qux");
+    testPath("/test/bar/abc", "bar/[abc]");
+    testPath("/test/baz/abc/qux", "baz/[abc]/qux");
     testPath("/test/baz/123/qux", "baz/123/qux");
 };
+
+exports.testSimpleCors = function() {
+   var {text} = require('ringo/jsgi/response');
+   var app = new Application();
+   app.configure('cors', 'route');
+   app.cors({
+      allowOrigin: ['http://example.com'],
+      exposeHeaders: ['X-FooBar'],
+   });
+   var responseBody = 'ok';
+   app.get('/', function() { return text(responseBody)});
+
+   // no origin
+   var response = app({
+      method: 'GET',
+      headers: {},
+      env: {},
+      pathInfo: '/'
+   });
+   assert.isUndefined(response.headers['Access-Control-Allow-Origin'])
+   assert.equal(response.body[0], responseBody);
+
+   // invalid origin
+   var response = app({
+      method: 'GET',
+      headers: {origin: 'http://example2.com'},
+      env: {},
+      pathInfo: '/'
+   });
+   assert.isUndefined(response.headers['Access-Control-Allow-Origin'])
+   assert.equal(response.body[0], responseBody);
+
+   // valid origin
+   var response = app({
+      method: 'GET',
+      headers: {origin: 'http://example.com'},
+      env: {},
+      pathInfo: '/'
+   });
+   assert.equal(response.headers['Access-Control-Allow-Origin'], 'http://example.com');
+   assert.equal(response.body, responseBody);
+
+   // case sensitive (!)
+   var response = app({
+      method: 'GET',
+      headers: {origin: 'http://exAmpLe.Com'},
+      env: {},
+      pathInfo: '/'
+   });
+   assert.isUndefined(response.headers['Access-Control-Allow-Origin']);
+   // the actual response *is* sent. The client decides whether to
+   // hand the data to the request depending on the Allow-Origin header.
+   assert.equal(response.body, responseBody);
+
+   // invalid configuration - can not have allowOrigin=* and allowCredentials
+   assert.throws(function() {
+      app.cors({
+        allowOrigin: ['*'],
+        allowCredentials: true
+      })
+   });
+
+   // allow all
+   app.cors({
+      allowOrigin: ['*'],
+      allowCredentials: false
+   });
+   var response = app({
+      method: 'GET',
+      headers: {origin: 'http://example.com'},
+      env: {},
+      pathInfo: '/'
+   });
+   assert.equal(response.headers['Access-Control-Allow-Origin'], 'http://example.com');
+   assert.equal(response.headers['Access-Control-Expose-Headers'], 'X-FooBar');
+   assert.equal(response.body, responseBody);
+};
+
+exports.testPreflightCors = function() {
+   var {text} = require('ringo/jsgi/response');
+   var app = new Application();
+   app.configure('cors', 'route');
+   app.cors({
+     allowOrigin: ['http://example.com'],
+     allowMethods: ['POST'],
+     allowHeaders: ['X-FooBar'],
+     maxAge: 1728000,
+     allowCredentials: true
+   });
+   var preflightResponseBody = 'preflight okay'
+   app.options('/', function() {
+    return text(preflightResponseBody)}
+   );
+
+   // no origin
+   var response = app({
+      method: 'OPTIONS',
+      headers: {'access-control-request-method': 'POST'},
+      env: {},
+      pathInfo: '/'
+   });
+   assert.isUndefined(response.headers['Access-Control-Allow-Origin'])
+   assert.equal(response.body[0], preflightResponseBody);
+
+   // invalid origin
+   var response = app({
+      method: 'OPTIONS',
+      headers: {origin: 'http://example2.com', 'access-control-request-method': 'POST'},
+      env: {},
+      pathInfo: '/'
+   });
+   assert.isUndefined(response.headers['Access-Control-Allow-Origin']);
+   // note again how the resource was indeed executed. a compliant
+   // client would not have sent this request but stopped the CORS procedure
+   // after the failed preflight request.
+   assert.equal(response.body[0], preflightResponseBody);
+
+   // invalid method
+   var response = app({
+      method: 'OPTIONS',
+      headers: {origin: 'http://example.com', 'access-control-request-method': 'DELETE'},
+      env: {},
+      pathInfo: '/'
+   });
+   assert.notEqual(response.headers['Access-Control-Allow-Origin'], 'http://example.com');
+   assert.equal(response.body[0], preflightResponseBody);
+
+   // valid preflight
+   var response = app({
+      method: 'OPTIONS',
+      headers: {origin: 'http://example.com', 'access-control-request-method': 'POST'},
+      env: {},
+      pathInfo: '/'
+   });
+   assert.equal(response.headers['Access-Control-Allow-Origin'], 'http://example.com');
+   assert.equal(response.headers['Access-Control-Allow-Methods'], 'POST');
+   assert.equal(response.body[0], preflightResponseBody);
+
+   // invalid custom header
+   var response = app({
+      method: 'OPTIONS',
+      headers: {
+         origin: 'http://example.com',
+         'access-control-request-method': 'POST',
+         'access-control-request-headers': 'X-NotFooBar',
+      },
+      env: {},
+      pathInfo: '/'
+   });
+   assert.equal(response.headers['Access-Control-Allow-Origin'], 'http://example.com');
+   assert.equal(response.headers['Access-Control-Allow-Headers'], 'X-FooBar');
+   assert.equal(response.body[0], preflightResponseBody);
+
+   // valid custom header
+   var response = app({
+      method: 'OPTIONS',
+      headers: {
+         origin: 'http://example.com',
+         'access-control-request-method': 'POST',
+         'access-control-request-headers': 'X-FooBar',
+      },
+      env: {},
+      pathInfo: '/'
+   });
+   assert.equal(response.headers['Access-Control-Allow-Origin'], 'http://example.com');
+   assert.equal(response.headers['Access-Control-Allow-Headers'], 'X-FooBar');
+   assert.equal(response.headers['Access-Control-Max-Age'], '1728000');
+   assert.equal(response.body[0], preflightResponseBody);
+}
 
 /**
  * The default behavior of mount.js middleware will issue a 303 redirect if the user enters a mount
