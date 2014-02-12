@@ -67,6 +67,54 @@ exports.testMount = function() {
     testMount(app);
 };
 
+/**
+* The default behavior of mount.js middleware will issue a 303 redirect if the
+* user enters a mount path which does not end with a slash on a GET request.
+* The redirect returns the browser to the same path, but with a trailing slash.
+* Not very nice for performance or style when using REST urls.
+*/
+exports.testMountRedirect = function() {
+    var response;
+
+    var app = new Application();
+    app.configure(mount);
+
+    app.mount("/", function() { return "root" });
+    app.mount("/foo", function() { return "foo" });
+    app.mount("/foo/bar", function() { return "foo/bar" });
+
+    // These URLs should return a 303 response using the default URL treatment
+    response = app({headers: {}, method: "GET", env: {}, scriptName: "", pathInfo: ""});
+    assert.strictEqual(response.status, 303);
+    assert.strictEqual(response.headers.Location, "/");
+    response = app({headers: {}, method: "GET", env: {}, scriptName: "", pathInfo: "/foo"});
+    assert.strictEqual(response.status, 303);
+    assert.strictEqual(response.headers.Location, "/foo/");
+    response = app({headers: {}, method: "GET", env: {}, scriptName: "", pathInfo: "/foo/bar"});
+    assert.strictEqual(response.status, 303);
+    assert.strictEqual(response.headers.Location, "/foo/bar/");
+};
+
+/**
+* When using the mount command, the developer can choose to use REST-style URLs
+* without a redirect and without a trailing slash on the end of the URL.
+*/
+exports.testMountNoRedirect = function() {
+    var response;
+
+    var app = new Application();
+    app.configure(mount);
+
+    app.mount("/", function() { return "root" }, true);
+    app.mount("/foo", function() { return "foo" }, true);
+    app.mount("/foo/bar", function() { return "foo/bar" }, true);
+
+    // Using REST urls, these requests should return the expected content
+    assert.equal(app({headers: {}, env: {}, method: "GET", pathInfo: ""}), "root");
+    assert.equal(app({headers: {}, env: {}, method: "GET", pathInfo: "/foo"}), "foo");
+    assert.equal(app({headers: {}, env: {}, method: "GET", pathInfo: "/foo/bar"}), "foo/bar");
+};
+
 exports.testMountSort = function() {
     var app = new Application();
     app.configure(mount);
@@ -124,11 +172,11 @@ exports.testMountAndRouteResolution = function() {
     var app = new Application();
     app.configure(route);
 
-    app.get("/:param", function(req, p) { return p });
+    app.get("/:param", function(req, p) { return '[' + p + ']'});
     app.get("/foo", function() { return "foo" });
     app.get("/bar/foo", function() { return "bar/foo" });
-    app.get("/bar/:param", function(req, p) { return 'bar/' + p });
-    app.get("/baz/:param/qux", function(req, p) { return 'baz/' + p + '/qux'});
+    app.get("/bar/:param", function(req, p) { return 'bar/[' + p + ']'});
+    app.get("/baz/:param/qux", function(req, p) { return 'baz/[' + p + ']/qux'});
     app.get("/baz/123/qux", function() { return "baz/123/qux" });
 
     var mountApp = new Application();
@@ -136,10 +184,10 @@ exports.testMountAndRouteResolution = function() {
     mountApp.mount("/test", app);
 
     testPath("/test/foo", "foo");
-    testPath("/test/abc", "abc");
+    testPath("/test/abc", "[abc]");
     testPath("/test/bar/foo", "bar/foo");
-    testPath("/test/bar/abc", "bar/abc");
-    testPath("/test/baz/abc/qux", "baz/abc/qux");
+    testPath("/test/bar/abc", "bar/[abc]");
+    testPath("/test/baz/abc/qux", "baz/[abc]/qux");
     testPath("/test/baz/123/qux", "baz/123/qux");
 };
 
