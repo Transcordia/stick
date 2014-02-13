@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.ringojs</groupId>
             <artifactId>ringojs</artifactId>
-            <version>0.10.1.5</version>
+            <version>0.10.1.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
