@@ -1,5 +1,6 @@
 *.iws
 *.ipr
 *.iml
-.idea
-target
+.idea/
+target/
+docs/

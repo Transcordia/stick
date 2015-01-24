@@ -2,13 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>io.ejs</groupId>
-        <artifactId>ejs-parent</artifactId>
-        <version>1.0.0</version>
-    </parent>
-
-    <groupId>org.ringojs</groupId>
+    <groupId>io.ejs</groupId>
     <artifactId>stick</artifactId>
     <version>0.3.0.3</version>
 
@@ -16,9 +10,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.ringojs</groupId>
+            <groupId>io.ejs</groupId>
             <artifactId>ringojs</artifactId>
-            <version>0.10.1.6</version>
+            <version>0.11.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -58,13 +52,6 @@
         <system>github</system>
         <url>https://github.com/ringo/stick/issues</url>
     </issueManagement>
-
-    <repositories>
-        <repository>
-            <id>repo.ejs.io</id>
-            <url>http://repo.ejs.io/releases/</url>
-        </repository>
-    </repositories>
 
     <build>
         <resources>
