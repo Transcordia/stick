@@ -1,6 +1,5 @@
-*.iws
-*.ipr
 *.iml
-.idea/
-target/
-docs/
+/.idea
+/target
+/docs
+.DS_Store

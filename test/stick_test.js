@@ -54,6 +54,7 @@ exports.testCsrf = require("./middleware/csrf_test");
 exports.testMount = require("./middleware/mount_test");
 exports.testParams = require("./middleware/params_test");
 exports.testRoute = require("./middleware/route_test");
+exports.testLocale = require("./middleware/locale_test");
 
 /**
  * The default behavior of mount.js middleware will issue a 303 redirect if the user enters a mount
