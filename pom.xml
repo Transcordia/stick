@@ -4,7 +4,7 @@
 
     <groupId>io.ejs</groupId>
     <artifactId>stick</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <version>0.5.1-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
@@ -23,7 +23,8 @@
         <connection>scm:git:git@github.com:Transcordia/stick.git</connection>
         <developerConnection>scm:git:git@github.com:Transcordia/stick.git</developerConnection>
         <url>git@github.com:Transcordia/stick.git</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <licenses>
         <license>
