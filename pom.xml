@@ -9,6 +9,7 @@
     <packaging>jar</packaging>
 
     <name>Stick</name>
+    <url>http://ringojs.org/api/stick/index.html</url>
 
     <description>
         A JavaScript web application framework built upon rake-style middleware components. This
